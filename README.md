@@ -22,3 +22,16 @@ pip install -r requirements.txt
 ### To install CLIP
 
 Install [CLIP](https://github.com/openai/CLIP)
+
+## Components
+- GALIP​
+- Cross model contrastive learning​
+- Cross model fusion​
+- Cross model aggregation​
+- Classifier​
+- Emotional feature
+
+## Feature in progress
+### Feature fusion - ImageAndText
+- Can refer to the Feature_Fusion.zip file for code retrieving
+
