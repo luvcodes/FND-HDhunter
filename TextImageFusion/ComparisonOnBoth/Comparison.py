@@ -33,9 +33,7 @@ class ImageEncoder(nn.Module):
             self.model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
         elif model_type == 'vgg':
             self.model = vgg16(weights=VGG16_Weights.IMAGENET1K_V1)
-            # 修改VGG的分类器以匹配输出维度
             self.model.classifier[6] = nn.Linear(4096, 768)
-        # 对于ResNet，我们使用fc层来调整维度；对于VGG，我们已经修改了分类器的最后一层
         self.adjustment_layer = nn.Linear(1000, 768) if model_type == 'resnet' else None
 
     def forward(self, images):
@@ -65,21 +63,21 @@ class ImageEncoder(nn.Module):
 
 
 # 加权融合（Weighted Fusion）
-# class WeightedFusionModule(nn.Module):
-#     def __init__(self, text_encoder, image_encoder, fusion_size=768):
-#         super(WeightedFusionModule, self).__init__()
-#         self.text_encoder = text_encoder
-#         self.image_encoder = image_encoder
-#         self.text_weight = nn.Parameter(torch.rand(fusion_size))
-#         self.image_weight = nn.Parameter(torch.rand(fusion_size))
-#         self.fusion = nn.Linear(2 * fusion_size, fusion_size)
-#
-#     def forward(self, text, images):
-#         text_embeddings = self.text_encoder(text) * self.text_weight
-#         img_embeddings = self.image_encoder(images) * self.image_weight
-#         fused_embeddings = torch.cat((text_embeddings, img_embeddings), dim=1)
-#         fused_embeddings = self.fusion(fused_embeddings)
-#         return fused_embeddings
+class WeightedFusionModule(nn.Module):
+    def __init__(self, text_encoder, image_encoder, fusion_size=768):
+        super(WeightedFusionModule, self).__init__()
+        self.text_encoder = text_encoder
+        self.image_encoder = image_encoder
+        self.text_weight = nn.Parameter(torch.rand(fusion_size))
+        self.image_weight = nn.Parameter(torch.rand(fusion_size))
+        self.fusion = nn.Linear(2 * fusion_size, fusion_size)
+
+    def forward(self, text, images):
+        text_embeddings = self.text_encoder(text) * self.text_weight
+        img_embeddings = self.image_encoder(images) * self.image_weight
+        fused_embeddings = torch.cat((text_embeddings, img_embeddings), dim=1)
+        fused_embeddings = self.fusion(fused_embeddings)
+        return fused_embeddings
 
 
 # 交叉模态融合（Cross-Modal Fusion）
@@ -99,22 +97,23 @@ class FusionModule(nn.Module):
         fused_embeddings = self.fusion(fused_embeddings)
         return fused_embeddings
 
+
 # 卷积融合（Convolutional Fusion）
-# class ConvolutionalFusionModule(nn.Module):
-#     def __init__(self, text_encoder, image_encoder, fusion_output_size=768):
-#         super(ConvolutionalFusionModule, self).__init__()
-#         self.text_encoder = text_encoder
-#         self.image_encoder = image_encoder
-#         self.conv1 = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=3, padding=1)
-#         self.fusion = nn.Linear(fusion_output_size, fusion_output_size)
-#
-#     def forward(self, text, images):
-#         text_embeddings = self.text_encoder(text)
-#         img_embeddings = self.image_encoder(images)
-#         fused_embeddings = torch.stack((text_embeddings, img_embeddings), dim=1)
-#         fused_embeddings = self.conv1(fused_embeddings).squeeze(1)
-#         fused_embeddings = self.fusion(fused_embeddings)
-#         return fused_embeddings
+class ConvolutionalFusionModule(nn.Module):
+    def __init__(self, text_encoder, image_encoder, fusion_output_size=768):
+        super(ConvolutionalFusionModule, self).__init__()
+        self.text_encoder = text_encoder
+        self.image_encoder = image_encoder
+        self.conv1 = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=3, padding=1)
+        self.fusion = nn.Linear(fusion_output_size, fusion_output_size)
+
+    def forward(self, text, images):
+        text_embeddings = self.text_encoder(text)
+        img_embeddings = self.image_encoder(images)
+        fused_embeddings = torch.stack((text_embeddings, img_embeddings), dim=1)
+        fused_embeddings = self.conv1(fused_embeddings).squeeze(1)
+        fused_embeddings = self.fusion(fused_embeddings)
+        return fused_embeddings
 
 
 # 图像预处理函数，维持不变
