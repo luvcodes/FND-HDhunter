@@ -47,20 +47,74 @@ class ImageEncoder(nn.Module):
 
 
 # 融合模块
+# class FusionModule(nn.Module):
+#     def __init__(self, text_encoder, image_encoder):
+#         super(FusionModule, self).__init__()
+#         self.text_encoder = text_encoder
+#         self.image_encoder = image_encoder
+#         # 维持原有的融合策略
+#         self.fusion = nn.Linear(1536, 768)
+#
+#     def forward(self, text, images):
+#         text_embeddings = self.text_encoder(text)
+#         img_embeddings = self.image_encoder(images)
+#         fused_embeddings = torch.cat((text_embeddings, img_embeddings), dim=1)  # cat方法
+#
+#         fused_embeddings = self.fusion(fused_embeddings)
+#         return fused_embeddings
+
+
+# 加权融合（Weighted Fusion）
+# class WeightedFusionModule(nn.Module):
+#     def __init__(self, text_encoder, image_encoder, fusion_size=768):
+#         super(WeightedFusionModule, self).__init__()
+#         self.text_encoder = text_encoder
+#         self.image_encoder = image_encoder
+#         self.text_weight = nn.Parameter(torch.rand(fusion_size))
+#         self.image_weight = nn.Parameter(torch.rand(fusion_size))
+#         self.fusion = nn.Linear(2 * fusion_size, fusion_size)
+#
+#     def forward(self, text, images):
+#         text_embeddings = self.text_encoder(text) * self.text_weight
+#         img_embeddings = self.image_encoder(images) * self.image_weight
+#         fused_embeddings = torch.cat((text_embeddings, img_embeddings), dim=1)
+#         fused_embeddings = self.fusion(fused_embeddings)
+#         return fused_embeddings
+
+
+# 交叉模态融合（Cross-Modal Fusion）
 class FusionModule(nn.Module):
-    def __init__(self, text_encoder, image_encoder):
+    def __init__(self, text_encoder, image_encoder, fusion_output_size=768):
         super(FusionModule, self).__init__()
         self.text_encoder = text_encoder
         self.image_encoder = image_encoder
-        # 维持原有的融合策略
-        self.fusion = nn.Linear(1536, 768)
+        self.cross_attention = nn.MultiheadAttention(embed_dim=fusion_output_size, num_heads=8)
+        self.fusion = nn.Linear(2 * fusion_output_size, fusion_output_size)
 
     def forward(self, text, images):
-        text_embeddings = self.text_encoder(text)
-        img_embeddings = self.image_encoder(images)
-        fused_embeddings = torch.cat((text_embeddings, img_embeddings), dim=1)
+        text_embeddings = self.text_encoder(text).unsqueeze(0)  # Batch size 1 for multihead attention
+        img_embeddings = self.image_encoder(images).unsqueeze(0)
+        attn_output, _ = self.cross_attention(text_embeddings, img_embeddings, img_embeddings)
+        fused_embeddings = torch.cat((attn_output.squeeze(0), img_embeddings.squeeze(0)), dim=1)
         fused_embeddings = self.fusion(fused_embeddings)
         return fused_embeddings
+
+# 卷积融合（Convolutional Fusion）
+# class ConvolutionalFusionModule(nn.Module):
+#     def __init__(self, text_encoder, image_encoder, fusion_output_size=768):
+#         super(ConvolutionalFusionModule, self).__init__()
+#         self.text_encoder = text_encoder
+#         self.image_encoder = image_encoder
+#         self.conv1 = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=3, padding=1)
+#         self.fusion = nn.Linear(fusion_output_size, fusion_output_size)
+#
+#     def forward(self, text, images):
+#         text_embeddings = self.text_encoder(text)
+#         img_embeddings = self.image_encoder(images)
+#         fused_embeddings = torch.stack((text_embeddings, img_embeddings), dim=1)
+#         fused_embeddings = self.conv1(fused_embeddings).squeeze(1)
+#         fused_embeddings = self.fusion(fused_embeddings)
+#         return fused_embeddings
 
 
 # 图像预处理函数，维持不变
