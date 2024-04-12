@@ -151,7 +151,9 @@ def run_example(model_type='bert_resnet', text="This is a text", image_path="ima
     text_model_type, image_model_type = model_type.split('_')
     text_encoder = TextEncoder(model_type=text_model_type)
     image_encoder = ImageEncoder(model_type=image_model_type)
+    # FusionModule is to use the cross-model fusion with multi-head attention
     # fusion_module = FusionModule(text_encoder, image_encoder)
+    # ConvolutionalFusionModule is to use the convolutional feature fusion strategy
     fusion_module = ConvolutionalFusionModule(text_encoder, image_encoder)
     classifier = Classifier(fusion_output_size=768)
 
