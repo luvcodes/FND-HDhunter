@@ -151,7 +151,8 @@ def run_example(model_type='bert_resnet', text="This is a text", image_path="ima
     text_model_type, image_model_type = model_type.split('_')
     text_encoder = TextEncoder(model_type=text_model_type)
     image_encoder = ImageEncoder(model_type=image_model_type)
-    fusion_module = FusionModule(text_encoder, image_encoder)
+    # fusion_module = FusionModule(text_encoder, image_encoder)
+    fusion_module = ConvolutionalFusionModule(text_encoder, image_encoder)
     classifier = Classifier(fusion_output_size=768)
 
     images = preprocess_image(image_path)
@@ -172,6 +173,6 @@ def run_example(model_type='bert_resnet', text="This is a text", image_path="ima
 
 # 示例运行
 text = "This is a spiderman"
-image_path = "../Spiderman2.jpeg"
+image_path = "FND-HDhunter\TextImageFusion\Spiderman1.png"
 run_example(model_type='bert_resnet', text=text, image_path=image_path)
 run_example(model_type='roberta_vgg', text=text, image_path=image_path)
