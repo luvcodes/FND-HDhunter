@@ -33,5 +33,7 @@ Install [CLIP](https://github.com/openai/CLIP)
 
 ## Feature in progress
 ### Feature fusion - ImageAndText
-- Can refer to the Feature_Fusion.zip file for code retrieving
+The first version of feature fusion implmentation code is currently in TextImageFusion folder. 
+- Current implmentation method: Cross-modal with multi-head attention mechanism
+- CLIPs with concatenation method
 
