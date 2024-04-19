@@ -15,7 +15,8 @@ class ImageEncoder(nn.Module):
         super(ImageEncoder, self).__init__()
         if model_type == 'resnet':
             self.model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
-            self.adjustment_layer = nn.Linear(1000, 1024)  # 1024 dimensions
+            # 1024 dimensions
+            self.adjustment_layer = nn.Linear(1000, 1024)
 
     def forward(self, images):
         img_embeddings = self.model(images)
@@ -28,7 +29,8 @@ class TextEncoder(nn.Module):
         if model_type == 'bert':
             self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
             self.model = BertModel.from_pretrained('bert-base-uncased')
-            self.adjustment_layer = nn.Linear(768, 1024)  # 1024 dimensions
+            # 1024 dimensions
+            self.adjustment_layer = nn.Linear(768, 1024)
 
     def forward(self, texts):
         inputs = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
@@ -43,10 +45,12 @@ class CrossModalFusion(nn.Module):
         self.text_encoder = text_encoder
         self.image_encoder = image_encoder
         self.cross_attention = nn.MultiheadAttention(embed_dim=fusion_output_size, num_heads=8)
-        self.fusion = nn.Linear(fusion_output_size * 2, fusion_output_size)  # adjust linear layer to match 1024 dimensions
+        # adjust linear layer to match 1024 dimensions
+        self.fusion = nn.Linear(fusion_output_size * 2, fusion_output_size)
 
     def forward(self, text_embeddings, img_embeddings):
-        text_embeddings = text_embeddings.unsqueeze(0)  # Batch size 1 for multihead attention
+        # Batch size 1 for multihead attention
+        text_embeddings = text_embeddings.unsqueeze(0)
         img_embeddings = img_embeddings.unsqueeze(0)
         attn_output, _ = self.cross_attention(text_embeddings, img_embeddings, img_embeddings)
         fused_embeddings = torch.cat((attn_output.squeeze(0), img_embeddings.squeeze(0)), dim=1)
@@ -54,7 +58,7 @@ class CrossModalFusion(nn.Module):
         return fused_embeddings
 
 
-# 数据集定义
+# Define the dataset
 class NewsDataset(Dataset):
     def __init__(self, pickle_file, transform=None):
         with open(pickle_file, 'rb') as f:
@@ -77,7 +81,7 @@ class NewsDataset(Dataset):
             image = torch.tensor(image_data) if not isinstance(image_data, torch.Tensor) else image_data
         return original_post, image
 
-# 图像预处理
+# Preprocessing the images
 transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -85,14 +89,14 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-# 初始化编码器和数据集
+# Initialize the encoders
 text_encoder = TextEncoder(model_type='bert')
 image_encoder = ImageEncoder(model_type='resnet')
 fusion_module = CrossModalFusion(text_encoder, image_encoder)
 dataset = NewsDataset('FND-HDhunter\\TextImageFusion\\datasets\\datasets_pickle1\\train.pkl', transform=transform)
 data_loader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-# 特征提取和保存为CSV
+# Feature extraction and save as CSV file
 def extract_features_and_save(data_loader, fusion_module, csv_file):
     features = []
     with torch.no_grad():
