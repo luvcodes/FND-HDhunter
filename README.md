@@ -35,5 +35,12 @@ Install [CLIP](https://github.com/openai/CLIP)
 ### Feature fusion - ImageAndText
 The first version of feature fusion implmentation code is currently in TextImageFusion folder. 
 - Current implmentation method: Cross-modal with multi-head attention mechanism
+    - Currently using BERT and ResNet50 as the text-image encoder combination
 - CLIPs with concatenation method
 
+## GALIP training and optimizing in process
+
+## Coolant training and optimizing in process
+
+## Classifier implementation in process
+- Using CNN as the technique to futher process the tensor matrix generated after the feature fusion
