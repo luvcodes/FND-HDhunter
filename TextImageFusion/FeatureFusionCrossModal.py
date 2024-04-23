@@ -93,7 +93,7 @@ transform = transforms.Compose([
 text_encoder = TextEncoder(model_type='bert')
 image_encoder = ImageEncoder(model_type='resnet')
 fusion_module = CrossModalFusion(text_encoder, image_encoder)
-dataset = NewsDataset('FND-HDhunter\\TextImageFusion\\datasets\\datasets_pickle1\\train.pkl', transform=transform)
+dataset = NewsDataset('"C:\\Users\\ryanw\\OneDrive\\Desktop\\datasets_pickle1\\train.pkl"', transform=transform)
 data_loader = DataLoader(dataset, batch_size=1, shuffle=False)
 
 # Feature extraction and save as CSV file
