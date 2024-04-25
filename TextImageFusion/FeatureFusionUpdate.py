@@ -108,7 +108,8 @@ def extract_features_and_save(data_loader, text_features, image_encoder, fusion_
             images = images.float()
             image_feature = image_encoder(images).cpu()
             
-            # 从numpy数组转换文本特征张量，并转换为float32
+            # 从numpy数组转换文本特征张量，并transform to float32 structure
+            # Currently using CPU for the compiling but can be changed to GPU
             text_feature = torch.tensor(text_features[idx], dtype=torch.float32).unsqueeze(0).cpu()
             
             # 融合特征，并确保输出是numpy数组
