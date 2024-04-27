@@ -29,7 +29,8 @@ class TextEncoder(nn.Module):
         if model_type == 'bert':
             self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
             self.model = BertModel.from_pretrained('bert-base-uncased')
-            self.adjustment_layer = nn.Linear(768, 1024)  # Adjust to 1024 dimensions
+            # Adjust to 1024 dimensions
+            self.adjustment_layer = nn.Linear(768, 1024)
 
     def forward(self, texts):
         inputs = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
@@ -84,6 +85,7 @@ transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
+    # normalize into a more standard range? (0, 1) -> (-1, 1)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
@@ -95,10 +97,10 @@ fusion_module = CrossModalFusion(text_encoder, image_encoder)  # 请确保已经
 dataset = ImageDataset(image_folder_path, transform=transform)
 data_loader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-# 读取文本特征CSV文件
+# Read the csv files generated based on previous steps
 text_features = pd.read_csv(csv_text_features).values
 
-# 特征提取和保存为CSV
+# extract the features and save them
 def extract_features_and_save(data_loader, text_features, image_encoder, fusion_module, csv_output):
     with torch.no_grad():
         fused_features = []
