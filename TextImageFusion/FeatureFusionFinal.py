@@ -74,7 +74,8 @@ class ImageDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        image_id = self.data.iloc[idx, -1]  # 假设image_id位于最后一列
+        # Assume that image_id is in the last column
+        image_id = self.data.iloc[idx, -1]  
         image_path = os.path.join(self.folder_path, f"{image_id}.jpg")
         image = Image.open(image_path).convert('RGB')
         if self.transform:
@@ -109,7 +110,8 @@ def extract_features_and_save(data_loader, image_encoder, fusion_module, csv_out
             print(f"Processing image {idx+1}/{len(data_loader)}...")
             images = images.float()
             image_feature = image_encoder(images).cpu()
-            # 确保在传递给融合模块前，特征只被增加到正确的维度
+            # Ensure that features are only augmented to the correct dimensions 
+            # before being passed to the fusion module.
             if features.dim() == 1:
                 features = features.unsqueeze(0)
             # print("Features shape for attention:", features.shape)
@@ -117,10 +119,27 @@ def extract_features_and_save(data_loader, image_encoder, fusion_module, csv_out
             fused_feature = fusion_module(features, image_feature)
             fused_features.append(fused_feature.squeeze(0).numpy())
 
-        # 保存融合特征到CSV文件
+        # Save fused features to CSV file
         fused_features_array = np.vstack(fused_features)
         pd.DataFrame(fused_features_array).to_csv(csv_output, index=False)
 
 
 csv_output = "C:\\Users\\ryanw\\OneDrive\\Desktop\\FND-HDhunter\\TextImageFusion\\csvFilesCollection\\final01.csv"
 extract_features_and_save(data_loader, image_encoder, fusion_module, csv_output)
+
+# -----------------------------------
+# 这里是为了最后将image_id合并到最终的feature fusion CSV文件中。运行时要先注释下面的代码，需要重新生成CSV再打开注释！！！
+# load csv file with fused features
+fused_features_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\final01.csv')
+
+# load image id data
+image_id_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\feature_with_image_id.csv')
+
+# Make sure that the two data frames have the same number of rows
+if len(fused_features_df) == len(image_id_df):
+    # Add image_id column to the feature DataFrame
+    fused_features_df['image_id'] = image_id_df['image_id']
+    fused_features_df.to_csv('C:\\Users\\ryanw\\OneDrive\\Desktop\\FND-HDhunter\\TextImageFusion\\csvFilesCollection\\final02_with_image_id.csv', index=False)
+    print("New CSV file with image_id has been saved successfully.")
+else:
+    print("Error: The number of rows in final01.csv does not match feature_with_image_id.csv")
