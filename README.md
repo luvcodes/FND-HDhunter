@@ -43,7 +43,7 @@ The first version of feature fusion implmentation code is currently in TextImage
     - Merge files: `feature_with_image_id.csv` and `feature3.csv` file. 
     - Generate result: `final_features_fusion.csv`, this is the file with last column of image_id
 - Use the `final_features_fusion.csv` file and the GALIP generated images to generate the final feature fusion tensors.
-    - Generate result: `final01.csv` file
+    - Generate result: `final01.csv` file, 5415 * 1536 of tensors.
 
 ## GALIP training and optimizing in process
 
