@@ -38,6 +38,13 @@ The first version of feature fusion implmentation code is currently in TextImage
     - Currently using BERT and ResNet50 as the text-image encoder combination
 - CLIPs with concatenation method
 
+#### Implementation order: 
+- Start with the `ReadAndMerge.py` file, this will generate the csv file with image_id, followed by generate the 5415*1026 table with the last column of image_id merged. 
+    - Merge files: `feature_with_image_id.csv` and `feature3.csv` file. 
+    - Generate result: `final_features_fusion.csv`, this is the file with last column of image_id
+- Use the `final_features_fusion.csv` file and the GALIP generated images to generate the final feature fusion tensors.
+    - Generate result: `final01.csv` file
+
 ## GALIP training and optimizing in process
 
 ## Coolant training and optimizing in process
