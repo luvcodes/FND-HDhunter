@@ -9,6 +9,7 @@ from transformers import BertTokenizer, BertModel
 from PIL import Image
 import os
 
+
 # 定义图像编码器
 class ImageEncoder(nn.Module):
     def __init__(self, model_type='resnet'):
@@ -21,6 +22,7 @@ class ImageEncoder(nn.Module):
         img_embeddings = self.model(images)
         img_embeddings = self.adjustment_layer(img_embeddings)
         return img_embeddings
+
 
 # 定义文本编码器
 class TextEncoder(nn.Module):
@@ -37,6 +39,7 @@ class TextEncoder(nn.Module):
         text_embeddings = outputs.last_hidden_state.mean(dim=1)
         text_embeddings = self.adjustment_layer(text_embeddings)
         return text_embeddings
+
 
 # 定义交叉模态融合模块
 class CrossModalFusion(nn.Module):
@@ -75,13 +78,14 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         # Assume that image_id is in the last column
-        image_id = self.data.iloc[idx, -1]  
+        image_id = self.data.iloc[idx, -1]
         image_path = os.path.join(self.folder_path, f"{image_id}.jpg")
         image = Image.open(image_path).convert('RGB')
         if self.transform:
             image = self.transform(image)
         features = torch.tensor(self.data.iloc[idx, :-1].astype(float).values, dtype=torch.float32)
         return image, features
+
 
 # 图像预处理
 transform = transforms.Compose([
@@ -102,12 +106,13 @@ text_encoder = TextEncoder(model_type='bert')
 image_encoder = ImageEncoder(model_type='resnet')
 fusion_module = CrossModalFusion(text_encoder, image_encoder)
 
+
 # 特征提取和保存函数
 def extract_features_and_save(data_loader, image_encoder, fusion_module, csv_output):
     with torch.no_grad():
         fused_features = []
         for idx, (images, features) in enumerate(data_loader):
-            print(f"Processing image {idx+1}/{len(data_loader)}...")
+            print(f"Processing image {idx + 1}/{len(data_loader)}...")
             images = images.float()
             image_feature = image_encoder(images).cpu()
             # Ensure that features are only augmented to the correct dimensions 
@@ -130,16 +135,16 @@ extract_features_and_save(data_loader, image_encoder, fusion_module, csv_output)
 # -----------------------------------
 # 这里是为了最后将image_id合并到最终的feature fusion CSV文件中。运行时要先注释下面的代码，需要重新生成CSV再打开注释！！！
 # load csv file with fused features
-fused_features_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\final01.csv')
-
-# load image id data
-image_id_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\feature_with_image_id.csv')
-
-# Make sure that the two data frames have the same number of rows
-if len(fused_features_df) == len(image_id_df):
-    # Add image_id column to the feature DataFrame
-    fused_features_df['image_id'] = image_id_df['image_id']
-    fused_features_df.to_csv('C:\\Users\\ryanw\\OneDrive\\Desktop\\FND-HDhunter\\TextImageFusion\\csvFilesCollection\\final02_with_image_id.csv', index=False)
-    print("New CSV file with image_id has been saved successfully.")
-else:
-    print("Error: The number of rows in final01.csv does not match feature_with_image_id.csv")
+# fused_features_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\final01.csv')
+#
+# # load image id data
+# image_id_df = pd.read_csv('TextImageFusion\\csvFilesCollection\\feature_with_image_id.csv')
+#
+# # Make sure that the two data frames have the same number of rows
+# if len(fused_features_df) == len(image_id_df):
+#     # Add image_id column to the feature DataFrame
+#     fused_features_df['image_id'] = image_id_df['image_id']
+#     fused_features_df.to_csv('C:\\Users\\ryanw\\OneDrive\\Desktop\\FND-HDhunter\\TextImageFusion\\csvFilesCollection\\final02_with_image_id.csv', index=False)
+#     print("New CSV file with image_id has been saved successfully.")
+# else:
+#     print("Error: The number of rows in final01.csv does not match feature_with_image_id.csv")
