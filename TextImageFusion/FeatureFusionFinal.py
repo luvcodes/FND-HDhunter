@@ -10,13 +10,14 @@ from PIL import Image
 import os
 
 
-# 定义图像编码器
+# Define the image encoder using ResNet50 model
 class ImageEncoder(nn.Module):
     def __init__(self, model_type='resnet'):
         super(ImageEncoder, self).__init__()
         if model_type == 'resnet':
             self.model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
-            self.adjustment_layer = nn.Linear(1000, 1024)  # Adjust to 1024 dimensions
+            # Adjust to 1024 dimensions
+            self.adjustment_layer = nn.Linear(1000, 1024)
 
     def forward(self, images):
         img_embeddings = self.model(images)
@@ -24,14 +25,15 @@ class ImageEncoder(nn.Module):
         return img_embeddings
 
 
-# 定义文本编码器
+# Define the text encoder using BERT model
 class TextEncoder(nn.Module):
     def __init__(self, model_type='bert'):
         super(TextEncoder, self).__init__()
         if model_type == 'bert':
             self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
             self.model = BertModel.from_pretrained('bert-base-uncased')
-            self.adjustment_layer = nn.Linear(768, 1024)  # Adjust to 1024 dimensions
+            # Adjust to 1024 dimensions
+            self.adjustment_layer = nn.Linear(768, 1024)
 
     def forward(self, texts):
         inputs = self.tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
@@ -41,7 +43,7 @@ class TextEncoder(nn.Module):
         return text_embeddings
 
 
-# 定义交叉模态融合模块
+# Define the cross modal fusion module
 class CrossModalFusion(nn.Module):
     def __init__(self, text_encoder, image_encoder, fusion_output_size=1024):
         super(CrossModalFusion, self).__init__()
@@ -53,7 +55,7 @@ class CrossModalFusion(nn.Module):
     def forward(self, text_embeddings, img_embeddings):
         # print("Before unsqueeze - Text embeddings shape:", text_embeddings.shape)
         # print("Before unsqueeze - Image embeddings shape:", img_embeddings.shape)
-        # 确保图像和文本的嵌入只有三个维度
+        # Make sure there are only three embeddings for the text and image features
         if text_embeddings.dim() == 2:
             text_embeddings = text_embeddings.unsqueeze(0)
         if img_embeddings.dim() == 2:
@@ -66,7 +68,7 @@ class CrossModalFusion(nn.Module):
         return fused_embeddings
 
 
-# 定义数据集
+# Identify the dataset
 class ImageDataset(Dataset):
     def __init__(self, folder_path, csv_file, transform=None):
         self.data = pd.read_csv(csv_file)

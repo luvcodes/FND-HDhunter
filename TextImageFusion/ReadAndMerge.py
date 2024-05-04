@@ -1,17 +1,16 @@
 import pandas as pd
 import pickle
 
-# 加载train.pkl文件
+
 with open('C:\\Users\\ryanw\\OneDrive\\Desktop\\datasets_pickle1\\train.pkl', 'rb') as f:
     data = pickle.load(f)
 
-# 创建DataFrame
 df = pd.DataFrame({
     'original_post': data['original_post'],
     'image_id': data['image_id']
 })
 
-# 将处理好的数据保存到CSV文件中, 这个就是有image_id的csv文件
+# Save to a CSV file
 df.to_csv('TextImageFusion\\csvFilesCollection\\feature_with_image_id.csv', index=False)
 
 # ---------------
