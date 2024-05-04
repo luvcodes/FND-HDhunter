@@ -45,6 +45,12 @@ The first version of feature fusion implmentation code is currently in TextImage
 - Use the `final_features_fusion.csv` file and the GALIP generated images to generate the final feature fusion tensors.
     - Generate result: `final01.csv` file, 5415 * 1536 of tensors.
 
+- Compiling step: 
+  1. `FeatureFusionCrossModal.py` file takes the input of `train.pkl` dataset and generate the `feature3.csv` file
+  2. `ReadAndMerge.py` file will generate the `feature_with_image_id.csv`
+  3. `ReadAndMerge.py` file will combine the `feature_with_image_id.csv` and the `feature3.csv` file.
+  4. `FeatureFusionFinal.py` file will generate the `final02.csv` file
+  5. `FeatureFusionFinal.py` file also contains the code of combine the `final02.csv` file and the `feature_with_image_id.csv`, this gives us the final result: `final02_with_image_id.csv`
 ## GALIP training and optimizing in process
 
 ## Coolant training and optimizing in process
