@@ -31,7 +31,7 @@ Install [CLIP](https://github.com/openai/CLIP)
 - Classifier​
 - Emotional feature
 
-## Feature in progress
+## Feature Fusion (Done)
 ### Feature fusion - ImageAndText
 The first version of feature fusion implmentation code is currently in TextImageFusion folder. 
 - Current implmentation method: Cross-modal with multi-head attention mechanism
@@ -51,9 +51,14 @@ The first version of feature fusion implmentation code is currently in TextImage
   3. `ReadAndMerge.py` file will combine the `feature_with_image_id.csv` and the `feature3.csv` file.
   4. `FeatureFusionFinal.py` file will generate the `final02.csv` file
   5. `FeatureFusionFinal.py` file also contains the code of combine the `final02.csv` file and the `feature_with_image_id.csv`, this gives us the final result: `final02_with_image_id.csv`
-## GALIP training and optimizing in process
-
-## Coolant training and optimizing in process
+## GALIP training and optimizing (Done!)
 
 ## Classifier implementation in process
 - Using CNN as the technique to futher process the tensor matrix generated after the feature fusion
+- MLP
+- Random Forest
+
+## Sentiment Analysis (Done!)
+- VADER as the pre-trained sentiment analysis model
+- NLP translator for non-English inputs
+
