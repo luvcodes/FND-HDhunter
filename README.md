@@ -31,7 +31,7 @@ Install [CLIP](https://github.com/openai/CLIP)
 - Classifier​
 - Emotional feature
 
-## Feature Fusion (Done)
+## Feature Fusion (Done with Fakeditt dataset)
 ### Feature fusion - ImageAndText
 The first version of feature fusion implmentation code is currently in TextImageFusion folder. 
 - Current implmentation method: Cross-modal with multi-head attention mechanism
