@@ -62,3 +62,10 @@ The first version of feature fusion implmentation code is currently in TextImage
 - VADER as the pre-trained sentiment analysis model
 - NLP translator for non-English inputs
 
+# Current Status
+- Feature fusion is done with the Fakeddit dataset
+- GALIP training and optimizing is done but requires further comparison with original GALIP model output results
+- Classifier implementation is in process
+- Prepare for the final presentation and report
+- Client report in progress
+
