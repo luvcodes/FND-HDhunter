@@ -23,6 +23,12 @@ pip install -r requirements.txt
 
 Install [CLIP](https://github.com/openai/CLIP)
 
+### To install VADER
+
+```
+pip install vaderSentiment
+```
+
 ## Components
 - GALIP​
 - Cross model fusion​
