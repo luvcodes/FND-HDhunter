@@ -41,13 +41,11 @@ pip install vaderSentiment
 
 ### GALIP
 
-- Pre-trained model, readjusted for the project
+- Pre-trained model, adjusted for the project
 
 ### Classifier
-- Using CNN as the technique to futher process the tensor matrix generated after the feature fusion
-- MLP
-- Random Forest
+- To identify the result of the news, binary result generated: fake or real. 
 
-### Sentiment Analysis (Done!)
+### Sentiment Analysis
 - VADER as the pre-trained sentiment analysis model
 - NLP translator for non-English inputs
